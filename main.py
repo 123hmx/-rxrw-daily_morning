@@ -35,9 +35,19 @@ def get_weather(province, city):
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
     url = "http://d1.weather.com.cn/dingzhi/{}.html?_={}".format(city_id, t)
-  res = requests.get(url).json()
-  weather = res['data']['list'][0]
-  return weather['weather'], math.floor(weather['temp'])
+    response = get(url, headers=headers)
+    response.encoding = "utf-8"
+    response_data = response.text.split(";")[0].split("=")[-1]
+    response_json = eval(response_data)
+    # print(response_json)
+    weatherinfo = response_json["weatherinfo"]
+    # 天气
+    weather = weatherinfo["weather"]
+    # 最高气温
+    temp = weatherinfo["temp"]
+    # 最低气温
+    tempn = weatherinfo["tempn"]
+    return weather, temp, tempn
 
 def get_count():
   delta = today - datetime.strptime(start_date, "%Y-%m-%d")
